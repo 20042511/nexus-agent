@@ -1,6 +1,6 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()       // KSP/Hilt 插件必须从这里找
+        gradlePluginPortal()
         google()
         mavenCentral()
     }
@@ -10,7 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
     }
 }
 rootProject.name = "nexus-agent"
