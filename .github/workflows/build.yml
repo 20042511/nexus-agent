@@ -8,55 +8,40 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/libs.versions.toml') }}
-          restore-keys: ${{ runner.os }}-gradle-
+          gradle-version: "8.9"
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Accept Android SDK licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - name: Accept SDK licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: gradle assembleDebug --no-daemon --stacktrace
         env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
           GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2g"
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: nexus-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
-      - name: Show APK info
+      - name: Summary
+        if: success()
         run: |
           APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
-          SIZE=$(du -sh "$APK" | cut -f1)
-          echo "### ✅ Nexus APK Build Success" >> $GITHUB_STEP_SUMMARY
-          echo "| | |" >> $GITHUB_STEP_SUMMARY
-          echo "|--|--|" >> $GITHUB_STEP_SUMMARY
-          echo "| Size | $SIZE |" >> $GITHUB_STEP_SUMMARY
-          echo "| File | $(basename $APK) |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Download**: Artifacts section below ↓" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Success" >> $GITHUB_STEP_SUMMARY
+          echo "APK size: $(du -sh $APK | cut -f1)" >> $GITHUB_STEP_SUMMARY
