@@ -119,3 +119,32 @@ data class AgentMessage(
     val actionTaken: String = "",
     val createdAt: Long = System.currentTimeMillis(),
 )
+
+// ─── String 常量（替代已删除的 enum/sealed class）─────
+object MessageDirection {
+    const val AGENT_TO_USER = "AGENT_TO_USER"
+    const val USER_TO_AGENT = "USER_TO_AGENT"
+}
+
+object StepType {
+    const val THOUGHT = "THOUGHT"
+    const val ACTION = "ACTION"
+    const val OBSERVATION = "OBSERVATION"
+    const val FINAL_ANSWER = "FINAL_ANSWER"
+    const val ERROR = "ERROR"
+}
+
+object TaskStatus {
+    const val PENDING = "PENDING"
+    const val RUNNING = "RUNNING"
+    const val DONE = "DONE"
+    const val FAILED = "FAILED"
+    const val WAITING_USER = "WAITING_USER"
+}
+
+// ─── 扩展属性（简化访问）────────────────────────────────
+val Goal.trigger: GoalTrigger
+    get() = Json.decodeFromString(triggerJson)
+
+val Task.status: String
+    get() = statusStr
