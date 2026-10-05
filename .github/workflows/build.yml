@@ -17,18 +17,22 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: gradle
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.9"
+      - name: Download gradle-wrapper.jar
+        run: |
+          mkdir -p gradle/wrapper
+          curl -fsSL -o gradle/wrapper/gradle-wrapper.jar \
+            https://github.com/gradle/gradle/raw/v8.7.0/gradle/wrapper/gradle-wrapper.jar
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Accept SDK licenses
-        run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
 
       - name: Build Debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
         env:
           GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2g"
 
@@ -39,9 +43,9 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
-      - name: Summary
+      - name: Build summary
         if: success()
         run: |
-          APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+          APK=$(find app/build/outputs/apk/debug -name '*.apk' | head -1)
           echo "## Build Success" >> $GITHUB_STEP_SUMMARY
-          echo "APK size: $(du -sh $APK | cut -f1)" >> $GITHUB_STEP_SUMMARY
+          echo "Size: $(du -sh $APK | cut -f1)" >> $GITHUB_STEP_SUMMARY
