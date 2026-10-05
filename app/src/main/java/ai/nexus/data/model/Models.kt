@@ -144,7 +144,7 @@ object TaskStatus {
 
 // ─── 扩展属性（简化访问）────────────────────────────────
 val Goal.trigger: GoalTrigger
-    get() = Json.decodeFromString(triggerJson)
+    get() = Json.decodeFromString(GoalTrigger.serializer(), triggerJson)
 
 val Task.status: String
     get() = statusStr
