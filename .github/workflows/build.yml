@@ -43,7 +43,7 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
-      - name: Build summary
+      - name: Summary
         if: success()
         run: |
           APK=$(find app/build/outputs/apk/debug -name '*.apk' | head -1)
