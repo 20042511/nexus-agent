@@ -159,7 +159,7 @@ class PlannerEngine(
         // 存入记忆
         if (finalAnswer.isNotEmpty()) {
             db.memoryDao().insert(Memory(
-                type = MemoryType.EPISODIC,
+                typeStr = "EPISODIC",
                 content = "Goal $goalId 执行结果: $finalAnswer",
                 importance = 0.7f,
                 relatedGoalId = goalId,
