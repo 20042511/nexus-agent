@@ -186,20 +186,20 @@ class AgentService : LifecycleService() {
 
             // 更新为 RUNNING
             db.taskDao().update(task.copy(
-                status = TaskStatus.RUNNING,
+                statusStr = TaskStatus.RUNNING,
                 startedAt = System.currentTimeMillis()
             ))
 
             try {
                 val result = planner.executeTask(task)
                 db.taskDao().update(task.copy(
-                    status = TaskStatus.DONE,
+                    statusStr = TaskStatus.DONE,
                     output = result,
                     finishedAt = System.currentTimeMillis()
                 ))
             } catch (e: Exception) {
                 db.taskDao().update(task.copy(
-                    status = TaskStatus.FAILED,
+                    statusStr = TaskStatus.FAILED,
                     error = e.message ?: "Unknown error",
                     finishedAt = System.currentTimeMillis()
                 ))
