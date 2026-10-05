@@ -19,7 +19,7 @@ object CronScheduler {
         val month  = cal.get(Calendar.MONTH) + 1
         val dow    = cal.get(Calendar.DAY_OF_WEEK) - 1
         // TODO: 查 DB 中 Schedule 类型的 Goal 并判断是否触发
-        _ = minute + hour + dom + month + dow  // suppress unused
+        // Suppress: minute + hour + dom + month + dow  // suppress unused
     }
 
     fun matches(cron: String, minute: Int, hour: Int, dom: Int, month: Int, dow: Int): Boolean {
