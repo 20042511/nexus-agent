@@ -10,7 +10,6 @@ plugins {
 android {
     namespace = "ai.nexus"
     compileSdk = 35
-
     defaultConfig {
         applicationId = "ai.nexus"
         minSdk = 26
@@ -18,13 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
     }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-        }
-    }
-
+    buildTypes { release { isMinifyEnabled = false } }
     buildFeatures { compose = true }
     kotlinOptions { jvmTarget = "17" }
     compileOptions {
