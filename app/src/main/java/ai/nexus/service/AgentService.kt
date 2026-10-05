@@ -78,7 +78,7 @@ class AgentService : LifecycleService() {
         return START_STICKY  // 被系统杀死后自动重启
     }
 
-    override fun onBind(intent: Intent?): IBinder? = super.onBind(intent)
+    override fun onBind(intent: Intent): IBinder? = super.onBind(intent)
 
     // ─── 初始化 ────────────────────────────────────────────
 
@@ -91,8 +91,8 @@ class AgentService : LifecycleService() {
         if (pendingTasks.isNotEmpty()) {
             updateNotification("恢复 ${pendingTasks.size} 个未完成任务")
             // 重置 RUNNING → PENDING（Service 重启了，RUNNING 状态是脏的）
-            pendingTasks.filter { it.status == TaskStatus.RUNNING }.forEach { task ->
-                db.taskDao().update(task.copy(status = TaskStatus.PENDING))
+            pendingTasks.filter { it.statusStr == TaskStatus.RUNNING }.forEach { task ->
+                db.taskDao().update(task.copy(statusStr = TaskStatus.PENDING))
             }
         }
 
