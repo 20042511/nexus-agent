@@ -9,30 +9,31 @@ plugins {
 
 android {
     namespace = "ai.nexus"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "ai.nexus"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            isMinifyEnabled = false
         }
     }
 
     buildFeatures { compose = true }
-
     kotlinOptions { jvmTarget = "17" }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 dependencies {
-    // ── Compose UI ──────────────────────────────────────
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
@@ -41,34 +42,19 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
     implementation(libs.lifecycle.compose)
-    debugImplementation(libs.compose.ui.tooling)
-
-    // ── 核心 Android ─────────────────────────────────────
-    implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.service)         // LifecycleService
-
-    // ── 依赖注入 ─────────────────────────────────────────
+    implementation(libs.lifecycle.service)
+    implementation(libs.core.ktx)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-
-    // ── 数据库 Room ───────────────────────────────────────
+    implementation(libs.hilt.work)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
-
-    // ── 后台任务 WorkManager ──────────────────────────────
     implementation(libs.work.runtime.ktx)
-    implementation(libs.hilt.work)
-
-    // ── 序列化 ────────────────────────────────────────────
-    implementation(libs.kotlinx.serialization.json)
-
-    // ── 协程 ──────────────────────────────────────────────
     implementation(libs.kotlinx.coroutines.android)
-
-    // ── 网络 OkHttp（工具层用）────────────────────────────
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
-    implementation(libs.okhttp.logging)
+    debugImplementation(libs.compose.ui.tooling)
 }
