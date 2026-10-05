@@ -281,7 +281,7 @@ Rules:
             // 提取 JSON（LLM 可能在 JSON 外面加文字）
             val jsonStr = response.substringAfter("{").substringBeforeLast("}").let { "{$it}" }
             val obj = Json.decodeFromString<JsonObject>(jsonStr)
-            val type = StepType.valueOf(obj["type"]?.jsonPrimitive?.content ?: "ERROR")
+            val type = obj["type"]?.jsonPrimitive?.content ?: StepType.ERROR
             ReActStep(
                 type = type,
                 thought = obj["thought"]?.jsonPrimitive?.content ?: "",
