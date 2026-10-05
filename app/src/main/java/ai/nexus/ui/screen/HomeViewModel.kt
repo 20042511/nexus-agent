@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
             }
 
             val goalId = db.goalDao().insert(
-                Goal(title = title, description = title, triggerJson = kotlinx.serialization.json.Json.encodeToString(trigger), statusStr = "ACTIVE")
+                Goal(title = title, description = title, triggerJson = kotlinx.serialization.json.Json.encodeToString(GoalTrigger.serializer(), trigger), statusStr = "ACTIVE")
             )
 
             // 如果是立即执行，触发 AgentService
