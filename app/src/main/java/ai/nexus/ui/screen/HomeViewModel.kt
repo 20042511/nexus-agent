@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
             }
 
             val goalId = db.goalDao().insert(
-                Goal(title = title, description = title, trigger = trigger)
+                Goal(title = title, description = title, triggerJson = kotlinx.serialization.json.Json.encodeToString(trigger), statusStr = "ACTIVE")
             )
 
             // 如果是立即执行，触发 AgentService
@@ -69,9 +69,9 @@ class HomeViewModel @Inject constructor(
             db.messageDao().update(message.copy(actionTaken = "授权"))
             // 恢复等待授权的 Task 继续执行
             db.taskDao().pendingTasks()
-                .filter { it.status == TaskStatus.WAITING_USER }
+                .filter { it.statusStr == TaskStatus.WAITING_USER }
                 .forEach { task ->
-                    db.taskDao().update(task.copy(status = TaskStatus.PENDING))
+                    db.taskDao().update(task.copy(statusStr = TaskStatus.PENDING))
                 }
             // 通知 AgentService 继续
             ContextCompat.startForegroundService(
@@ -87,9 +87,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             db.messageDao().update(message.copy(actionTaken = "拒绝"))
             db.taskDao().pendingTasks()
-                .filter { it.status == TaskStatus.WAITING_USER }
+                .filter { it.statusStr == TaskStatus.WAITING_USER }
                 .forEach { task ->
-                    db.taskDao().update(task.copy(status = TaskStatus.FAILED, error = "用户拒绝"))
+                    db.taskDao().update(task.copy(statusStr = TaskStatus.FAILED, error = "用户拒绝"))
                 }
         }
     }
